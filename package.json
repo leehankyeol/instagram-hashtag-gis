@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "async": "^2.1.4",
-    "unix-timestamp": "^0.2.0"
+    "unix-timestamp": "^0.2.0",
+    "write": "^0.3.2"
   }
 }
