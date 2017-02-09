@@ -20,5 +20,12 @@
   "bugs": {
     "url": "https://github.com/leehankyeol/instagram-hashtag-gis/issues"
   },
-  "homepage": "https://github.com/leehankyeol/instagram-hashtag-gis#readme"
+  "homepage": "https://github.com/leehankyeol/instagram-hashtag-gis#readme",
+  "devDependencies": {
+    "request": "^2.79.0"
+  },
+  "dependencies": {
+    "async": "^2.1.4",
+    "unix-timestamp": "^0.2.0"
+  }
 }
