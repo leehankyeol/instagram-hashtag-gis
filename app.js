@@ -1,9 +1,11 @@
 const async = require('async');
 const request = require('request');
+const write = require('write');
 const timestamp = require('unix-timestamp');
 
 const tagToInclude = 'truffle';
 const tagsToExclude = ['chocolate'];
+const COUNT = 100;
 
 const apiMedia = (endCursor = null) => {
   if (endCursor) {
@@ -23,6 +25,8 @@ const mediaValid = [];
 
 let count = 0;
 let maxId = null;
+
+let content = 'Place,lat,lng,date\n';
 
 const fetch = (maxId) => {
   request(apiMedia(maxId), (err, res, mediaBody) => {
@@ -67,7 +71,7 @@ const fetch = (maxId) => {
         console.log(err);
         return;
       }
-      console.log(`${mediaValid.length} out of ${media.length} have valid tags and location...`);
+      console.log(`Total ${mediaValid.length} have valid tags and location...`);
 
       async.each(mediaValid, (mediumValid, locationCallback) => {
         const id = mediumValid.media.location.id;
@@ -75,7 +79,8 @@ const fetch = (maxId) => {
 
         request(apiLocation(id, slug), (err, res, locationBody) => {
           locationBody = JSON.parse(locationBody);
-          console.log(locationBody.location.name, locationBody.location.lat, locationBody.location.lng, timestamp.toDate(mediumValid.media.date));
+
+          content += `${locationBody.location.name},${locationBody.location.lat},${locationBody.location.lng},${timestamp.toDate(mediumValid.media.date)}\n`;
           locationCallback();
         });
       }, (locationErr) => {
@@ -86,10 +91,13 @@ const fetch = (maxId) => {
 
         count += mediaValid.length;
 
-        if (count < 10) {
+        if (count < COUNT) {
           fetch(maxId);
         } else {
           console.log(`Count: ${count}`);
+          write('result.csv', content, function(err) {
+            if (err) console.log(err);
+          });
         }
       });
     });
