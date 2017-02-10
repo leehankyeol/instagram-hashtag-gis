@@ -50,19 +50,22 @@ const fetch = (maxId) => {
       request(apiMedium(shortcode), (err, res, mediumBody) => {
         mediumBody = JSON.parse(mediumBody);
         const caption = mediumBody.media.caption;
-        const tags = mediumBody.media.caption.match(/\#\w+/g);
-        const location = mediumBody.media.location;
-        let valid = true;
 
-        for (let i = 0, length = tagsToExclude.length; i < length; i++) {
-          const tagToExclude = tagsToExclude[i];
-          if (!location || (!location.id || !location.slug)
+        if (caption) {
+          const tags = mediumBody.media.caption.match(/\#\w+/g);
+          const location = mediumBody.media.location;
+          let valid = true;
+
+          for (let i = 0, length = tagsToExclude.length; i < length; i++) {
+            const tagToExclude = tagsToExclude[i];
+            if (!location || (!location.id || !location.slug)
             || !tags || tags.indexOf(`#${tagToExclude}`) > -1) {
-            valid = false;
+              valid = false;
+            }
           }
-        }
-        if (valid) {
-          mediaValid.push(mediumBody);
+          if (valid) {
+            mediaValid.push(mediumBody);
+          }
         }
         callback();
       });
