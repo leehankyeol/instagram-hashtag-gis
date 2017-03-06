@@ -3,15 +3,15 @@ const request = require('request');
 const write = require('write');
 const timestamp = require('unix-timestamp');
 
-const tagToInclude = 'truffle';
-const tagsToExclude = ['chocolate'];
-const COUNT = 10;
+const tagToInclude = '바보';
+const tagsToExclude = [''];
+const COUNT = 3;
 
 const apiMedia = (endCursor = null) => {
   if (endCursor) {
-    return `https://www.instagram.com/explore/tags/${tagToInclude}/?__a=1&max_id=${endCursor}`;
+    return `https://www.instagram.com/explore/tags/${encodeURIComponent(tagToInclude)}/?__a=1&max_id=${endCursor}`;
   } else {
-    return `https://www.instagram.com/explore/tags/${tagToInclude}/?__a=1`;
+    return `https://www.instagram.com/explore/tags/${encodeURIComponent(tagToInclude)}/?__a=1`;
   }
 };
 const apiMedium = (shortcode) => {
@@ -36,10 +36,13 @@ const fetch = (maxId) => {
   mediaValid = [];
 
   request(apiMedia(maxId), (err, res, mediaBody) => {
+    console.log(`Request to ${apiMedia(maxId)}...`);
+
     try {
       mediaBody = JSON.parse(mediaBody);
     } catch (e) {
       console.log(mediaBody);
+      return;
     }
     let endCursor = mediaBody.tag.media.page_info.end_cursor;
     const hasNextPage = mediaBody.tag.media.page_info.has_next_page;
@@ -49,7 +52,6 @@ const fetch = (maxId) => {
       endCursor = endCursor.replace(/%3D/g, '=');
     }
 
-    console.log(`Request to ${apiMedia(maxId)}...`);
     console.log(`endCursor: ${endCursor}`);
 
     maxId = endCursor;
@@ -96,7 +98,7 @@ const fetch = (maxId) => {
 
           const date = timestamp.toDate(mediumValid.media.date);
 
-          content += `"${locationBody.location.name}",${locationBody.location.lat},${locationBody.location.lng},${date.getFullYear()}-${(date.getMonth() + 1) < 10? '0' + (date.getMonth() + 1): date.getMonth() + 1}-${date.getDate()}\n`;
+          content += `"${locationBody.location.name}",${locationBody.location.lat},${locationBody.location.lng},${date.getFullYear()}-${(date.getMonth() + 1) < 10? '0' + (date.getMonth() + 1): date.getMonth() + 1}-${date.getDate() < 10? '0' + date.getDate(): date.getDate()}\n`;
           locationCallback();
         });
       }, (locationErr) => {
