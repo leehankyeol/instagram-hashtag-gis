@@ -3,7 +3,7 @@ const request = require('request');
 const write = require('write');
 const timestamp = require('unix-timestamp');
 
-const tagToInclude = '바보';
+const tagToInclude = '청멍이';
 const tagsToExclude = [''];
 const COUNT = 3;
 
@@ -94,7 +94,13 @@ const fetch = (maxId) => {
         const slug = mediumValid.media.location.slug;
 
         request(apiLocation(id, slug), (err, res, locationBody) => {
-          locationBody = JSON.parse(locationBody);
+          try {
+            locationBody = JSON.parse(locationBody);
+          } catch (e) {
+            console.log(e);
+            locationCallback();
+            return;
+          }
 
           const date = timestamp.toDate(mediumValid.media.date);
 
